@@ -18,7 +18,9 @@ Now connect to the server at port 1815. For instance, using netcat:
 ### Results
 __Macbook pro 2018 / 2,6ghz i7 6-core / 32Go RAM__
 
-connections/requests/iterations: 3/500000/3
+Using https://github.com/frevib/tcp-socket-client-performance-test
+
+connections/requests/test runs: 3/500000/3
 
 ```
 Total running time: 31322ms
@@ -30,4 +32,12 @@ req/s: 143668.97
 Total running time: 31052
 Requests handled: 1500000
 req/s: 144918.2
+```
+
+connections/requests/test runs: 4/500000/3
+
+```
+Total running time: 38273
+Requests handled: 2000000
+req/s: 156768.48
 ```
