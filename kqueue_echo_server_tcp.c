@@ -17,8 +17,8 @@ int main()
         socket_connection_fd,
         kq,
         new_events;
-    struct kevent change_event[1],
-        event[1];
+    struct kevent change_event[32],
+        event[32];
     struct sockaddr_in serv_addr,
         client_addr;
 
@@ -71,13 +71,13 @@ int main()
         // the kqueue. Hence the 2nd and 3rd arguments are NULL, 0.
         // Only handle 1 new event per iteration in the loop; 5th
         // argument is 1.
-        if ((new_events = kevent(kq, NULL, 0, event, 1, NULL)) < 0 ) {
+        if ((new_events = kevent(kq, NULL, 0, event, 32, NULL)) < 0 ) {
             perror("checking for new events error");
             exit(1);
         };
     
-        // if (new_events > 1) {
-        //     printf("new events: %d", new_events);
+        // if (new_events > 3) {
+        //     printf("new events: %d\n", new_events);
         // }
 
         // printf("amount of new events: %d\n", new_events);
