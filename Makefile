@@ -1,2 +1,2 @@
 all:
-	clang tcpserver_kqueue.c -o tcpserver_kqueue
+	clang kqueue_echo_server_tcp.c -o kqueue_echo_server_tcp

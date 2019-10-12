@@ -6,6 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 
+ #include <execinfo.h>
+
 int main()
 {
     // All needed variables.
@@ -15,8 +17,8 @@ int main()
         socket_connection_fd,
         kq,
         new_events;
-    struct kevent change_event[4],
-        event[4];
+    struct kevent change_event[1],
+        event[1];
     struct sockaddr_in serv_addr,
         client_addr;
 
@@ -60,6 +62,8 @@ int main()
         exit(1);
     }
 
+    int occurred_events = 0;
+
     // Actual event loop.
     for (;;)
     {
@@ -67,16 +71,18 @@ int main()
         // the kqueue. Hence the 2nd and 3rd arguments are NULL, 0.
         // Only handle 1 new event per iteration in the loop; 5th
         // argument is 1.
-        new_events = kevent(kq, NULL, 0, event, 1, NULL);
-        if (new_events == -1)
-        {
-            perror("kevent");
+        if ((new_events = kevent(kq, NULL, 0, event, 1, NULL)) < 0 ) {
+            perror("checking for new events error");
             exit(1);
-        }
+        };
+    
+        // if (new_events > 1) {
+        //     printf("new events: %d", new_events);
+        // }
 
+        // printf("amount of new events: %d\n", new_events);
         for (int i = 0; new_events > i; i++)
         {
-            printf("amount of new events: %d\n", new_events);
             int event_fd = event[i].ident;
 
             // When the client disconnects an EOF is sent. By closing the file
@@ -84,14 +90,15 @@ int main()
             if (event[i].flags & EV_EOF)
             {
                 printf("Client has disconnected\n");
-               close(event_fd);
+                printf("amount of events: %d\n", occurred_events);
+                close(event_fd);
             }
             // If the new event's file descriptor is the same as the listening
             // socket's file descriptor, we are sure that a new client wants 
             // to connect to our socket.
             else if (event_fd == socket_listen_fd)
             {
-                printf("New connection coming in...\n");    
+                // printf("New connection coming in...\n");    
 
                 // Incoming socket connection on the listening socket.
                 // Create a new socket for the actual connection to client.
@@ -109,14 +116,19 @@ int main()
                 {
                     perror("kevent error");
                 }
+
+                // char buf[] = "xxxx\n";
+                // send(socket_connection_fd, buf, strlen(buf), 0);
             }
 
             else if (event[i].filter & EVFILT_READ)
             {
+                occurred_events++;
                 // Read bytes from socket
-                char buf[1024];
-                size_t bytes_read = recv(event_fd, buf, sizeof(buf), 0);
-                printf("read %zu bytes\n", bytes_read);
+                int maxlen = 1000;
+                char buf[maxlen];
+                size_t bytes_read = recv(event_fd, buf, maxlen, 0);
+                send(event_fd, buf, bytes_read, 0);
             }
         }
     }
