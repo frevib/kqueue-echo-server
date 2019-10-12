@@ -17,6 +17,9 @@ Now connect to the server at port 1815. For instance, using netcat:
 
 ### Results
 __Macbook pro 2018 / 2,6ghz i7 6-core / 32Go RAM__
+
+‘’’
 time spent: 31322
 amount of socket writes: 1500000
 req/s: 143668.97
+‘’’
