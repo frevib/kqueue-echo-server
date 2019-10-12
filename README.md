@@ -25,3 +25,9 @@ Total running time: 31322ms
 Requests handled: 1500000
 req/s: 143668.97
 ```
+
+```
+Total running time: 31052
+Requests handled: 1500000
+req/s: 144918.2
+```
